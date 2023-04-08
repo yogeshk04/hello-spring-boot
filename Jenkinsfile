@@ -5,10 +5,13 @@ pipeline {
     stages{
 
         stage('Git Checkout'){
-            gitCheckout(
+            steps{
+                gitCheckout(
                 branch: "master",
                 url: "https://github.com/yogeshk04/hello-springboot.git"
             )
+            }
+            
         }
     }
 }
