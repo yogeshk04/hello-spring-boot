@@ -10,8 +10,15 @@ pipeline {
                 branch: "master",
                 url: "https://github.com/yogeshk04/hello-springboot.git"
             )
-            }
-            
+            }            
+        }
+
+        stage('Unit test Maven'){
+            steps{
+                script{
+                    mvnTest()
+                }
+            }            
         }
     }
 }
