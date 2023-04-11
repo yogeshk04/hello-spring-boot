@@ -45,7 +45,7 @@ pipeline{
                }
             }
         }
-
+        /*
         stage('Static code analysis: Sonarqube'){
          when { expression {  params.action == 'create' } }
             steps{
@@ -64,7 +64,7 @@ pipeline{
                }
             }
         }
-      
+        */      
         stage('Maven Build : maven'){
          when { expression {  params.action == 'create' } }
             steps{
