@@ -6,9 +6,13 @@ pipeline{
     parameters{
 
         choice(name: 'action', choices: 'create\ndelete', description: 'Choose create/Destroy')
-        string(name: 'ImageName', description: "name of the docker build", defaultValue: 'hello-springboot')
-        string(name: 'ImageTag', description: "tag of the docker build", defaultValue: 'v1')
-        string(name: 'DockerHubUser', description: "name of the Application", defaultValue: 'yogeshk04')
+        // string(name: 'ImageName', description: "name of the docker build", defaultValue: 'hello-springboot')
+        // string(name: 'ImageTag', description: "tag of the docker build", defaultValue: 'v1')
+        // string(name: 'DockerHubUser', description: "name of the Application", defaultValue: 'yogeshk04')
+        string(name: 'aws_account_id', description: " AWS Account ID", defaultValue: '383375023402')
+        string(name: 'region', description: "Region of ECR", defaultValue: 'eu-central-1')
+        string(name: 'ECR_REPO_NAME', description: "name of the ECR", defaultValue: 'ars-marketplace')
+        //string(name: 'cluster', description: "name of the EKS Cluster", defaultValue: 'demo-cluster1')
     }
 
     stages{
@@ -41,11 +45,11 @@ pipeline{
                }
             }
         }
+        /*
         stage('Static code analysis: Sonarqube'){
          when { expression {  params.action == 'create' } }
             steps{
-               script{
-                   
+               script{                   
                    def SonarQubecredentialsId = 'sonarqube-api'
                    staticCodeAnalysis(SonarQubecredentialsId)
                }
@@ -54,13 +58,13 @@ pipeline{
         stage('Quality Gate Status Check : Sonarqube'){
          when { expression {  params.action == 'create' } }
             steps{
-               script{
-                   
+               script{                   
                    def SonarQubecredentialsId = 'sonarqube-api'
                    qualityGateStatus(SonarQubecredentialsId)
                }
             }
-        }         
+        }
+        */      
         stage('Maven Build : maven'){
          when { expression {  params.action == 'create' } }
             steps{
@@ -70,6 +74,40 @@ pipeline{
                }
             }
         }
+    stage('Docker Image Build : ECR'){
+         when { expression {  params.action == 'create' } }
+            steps{
+               script{                   
+                   dockerBuild("${params.aws_account_id}","${params.region}","${params.ECR_REPO_NAME}")
+               }
+            }
+        }
+    stage('Docker Image Scan: trivy '){
+         when { expression {  params.action == 'create' } }
+            steps{
+               script{                   
+                   dockerImageScan("${params.aws_account_id}","${params.region}","${params.ECR_REPO_NAME}")
+               }
+            }
+        }
+        stage('Docker Image Push : ECR '){
+         when { expression {  params.action == 'create' } }
+            steps{
+               script{
+                   
+                   dockerImagePush("${params.aws_account_id}","${params.region}","${params.ECR_REPO_NAME}")
+               }
+            }
+        }   
+        stage('Docker Image Cleanup : ECR '){
+         when { expression {  params.action == 'create' } }
+            steps{
+               script{
+                   
+                   dockerImageCleanup("${params.aws_account_id}","${params.region}","${params.ECR_REPO_NAME}")
+               }
+            }
+        } 
         /*
         stage('Docker Image Build'){
          when { expression {  params.action == 'create' } }
