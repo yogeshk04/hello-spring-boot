@@ -41,13 +41,13 @@ pipeline{
                }
             }
         }
-        /* stage('Static code analysis: Sonarqube'){
+        stage('Static code analysis: Sonarqube'){
          when { expression {  params.action == 'create' } }
             steps{
                script{
                    
-                   def SonarQubecredentialsId = 'sonarqube-api'
-                   statiCodeAnalysis(SonarQubecredentialsId)
+                   def SonarQubecredentialsId = 'sonar-api'
+                   staticCodeAnalysis(SonarQubecredentialsId)
                }
             }
         }
@@ -56,11 +56,12 @@ pipeline{
             steps{
                script{
                    
-                   def SonarQubecredentialsId = 'sonarqube-api'
+                   def SonarQubecredentialsId = 'sonar-api'
                    QualityGateStatus(SonarQubecredentialsId)
                }
             }
         }
+        /* 
         stage('Maven Build : maven'){
          when { expression {  params.action == 'create' } }
             steps{
