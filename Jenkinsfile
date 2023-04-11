@@ -1,4 +1,4 @@
-@Library('jenkins-shared-lib') _
+@Library('shared-library') _
 pipeline{
 
     agent any
@@ -27,8 +27,7 @@ pipeline{
          when { expression {  params.action == 'create' } }
 
             steps{
-               script{
-                   
+               script{                   
                    mvnTest()
                }
             }
