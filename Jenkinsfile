@@ -88,14 +88,14 @@ pipeline{
                }
             }
         }
-/*     stage('Docker Image Scan: trivy '){
+    stage('Docker Image Scan: trivy '){
          when { expression {  params.action == 'create' } }
             steps{
                script{                   
                    dockerImageScan("${params.aws_account_id}","${params.region}","${params.ecr_repo_name}")
                }
             }
-        } */
+        }
     stage('Docker Image Push : ECR '){
          when { expression {  params.action == 'create' } }
             steps{
