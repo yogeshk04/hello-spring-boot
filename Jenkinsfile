@@ -99,8 +99,13 @@ pipeline{
     stage('Docker Image Push : ECR '){
          when { expression {  params.action == 'create' } }
             steps{
-               script{                   
-                   dockerImagePush("${params.aws_account_id}","${params.region}","${params.ecr_repo_name}")
+               script{
+
+                   //dockerImagePush("${params.aws_account_id}","${params.region}","${params.ecr_repo_name}")
+                   sh """
+                    aws ecr get-login-password --region ${params.region} | docker login --username AWS --password-stdin ${params.aws_account_id}.dkr.ecr.${params.region}.amazonaws.com
+                    docker push ${params.aws_account_id}.dkr.ecr.${params.region}.amazonaws.com/${params.ecr_repo}:latest
+                    """
                }
             }
         }   
