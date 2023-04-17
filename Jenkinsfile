@@ -11,7 +11,7 @@ pipeline{
         // string(name: 'DockerHubUser', description: "name of the Application", defaultValue: 'yogeshk04')
         string(name: 'aws_account_id', description: " AWS Account ID", defaultValue: '383375023402')
         string(name: 'region', description: "Region of ECR", defaultValue: 'eu-central-1')
-        string(name: 'ECR_REPO_NAME', description: "name of the ECR", defaultValue: 'ars-marketplace')
+        string(name: 'ecr_repo_name', description: "name of the ECR", defaultValue: 'ars-marketplace')
         //string(name: 'cluster', description: "name of the EKS Cluster", defaultValue: 'demo-cluster1')
     }
 
@@ -71,7 +71,7 @@ pipeline{
             }
         }
         */      
-        stage('Maven Build : maven'){
+    stage('Maven Build : maven'){
          when { expression {  params.action == 'create' } }
             steps{
                script{  
@@ -84,7 +84,7 @@ pipeline{
          when { expression {  params.action == 'create' } }
             steps{
                script{                   
-                   dockerBuild("${params.aws_account_id}","${params.region}","${params.ECR_REPO_NAME}")
+                   dockerBuild("${params.aws_account_id}","${params.region}","${params.ecr_repo_name}")
                }
             }
         }
@@ -92,29 +92,28 @@ pipeline{
          when { expression {  params.action == 'create' } }
             steps{
                script{                   
-                   dockerImageScan("${params.aws_account_id}","${params.region}","${params.ECR_REPO_NAME}")
+                   dockerImageScan("${params.aws_account_id}","${params.region}","${params.ecr_repo_name}")
                }
             }
         }
-        stage('Docker Image Push : ECR '){
+    stage('Docker Image Push : ECR '){
          when { expression {  params.action == 'create' } }
             steps{
-               script{
-                   
-                   dockerImagePush("${params.aws_account_id}","${params.region}","${params.ECR_REPO_NAME}")
+               script{                   
+                   dockerImagePush("${params.aws_account_id}","${params.region}","${params.ecr_repo_name}")
                }
             }
         }   
-        stage('Docker Image Cleanup : ECR '){
+    stage('Docker Image Cleanup : ECR '){
          when { expression {  params.action == 'create' } }
             steps{
                script{
                    
-                   dockerImageCleanup("${params.aws_account_id}","${params.region}","${params.ECR_REPO_NAME}")
+                   dockerImageCleanup("${params.aws_account_id}","${params.region}","${params.ecr_repo_name}")
                }
             }
         } 
-        stage('Create EKS Cluster : Terraform'){
+    stage('Create EKS Cluster : Terraform'){
             when { expression {  params.action == 'create' } }
             steps{
                 script{
