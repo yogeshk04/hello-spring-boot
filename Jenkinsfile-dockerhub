@@ -75,7 +75,7 @@ pipeline{
             steps{
                script{
                    
-                   dockerhubBuild("${params.ImageName}","${params.ImageTag}","${params.DockerHubUser}")
+                   dockerhubBuild("${params.DockerHubUser}","${params.ImageName}","${params.ImageTag}")
                }
             }
         }
@@ -84,7 +84,7 @@ pipeline{
             steps{
                script{
                    
-                   dockerhubImageScan("${params.ImageName}","${params.ImageTag}","${params.DockerHubUser}")
+                   dockerhubImageScan("${params.DockerHubUser}","${params.ImageName}","${params.ImageTag}")
                }
             }
         }
@@ -93,7 +93,7 @@ pipeline{
             steps{
                script{
                    
-                   dockerhubImagePush("${params.ImageName}","${params.ImageTag}","${params.DockerHubUser}")
+                   dockerhubImagePush("${params.DockerHubUser}","${params.ImageName}","${params.ImageTag}")
                }
             }
         }   
@@ -102,7 +102,7 @@ pipeline{
             steps{
                script{
                    
-                   dockerhubImageCleanup("${params.ImageName}","${params.ImageTag}","${params.DockerHubUser}")
+                   dockerhubImageCleanup("${params.DockerHubUser}","${params.ImageName}","${params.ImageTag}")
                }
             }
         }    
