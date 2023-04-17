@@ -15,6 +15,12 @@ pipeline{
         //string(name: 'cluster', description: "name of the EKS Cluster", defaultValue: 'demo-cluster1')
     }
 
+    environment{
+
+        AWS_ACCESS_KEY_ID = credentials('ACCESS_KEY')
+        AWS_SECRET_KEY_ID = credentials('SECRET_KEY')
+    }
+
     stages{
          
         stage('Git Checkout'){
@@ -108,6 +114,62 @@ pipeline{
                }
             }
         } 
+        stage('Create EKS Cluster : Terraform'){
+            when { expression {  params.action == 'create' } }
+            steps{
+                script{
+
+                    dir('eks_module') {
+                      sh """                          
+                          terraform init 
+                          terraform plan -var 'access_key=$AWS_ACCESS_KEY_ID' -var 'secret_key=$AWS_SECRET_KEY_ID' -var 'region=${params.region}' --var-file=./config/terraform.tfvars
+                          terraform apply -var 'access_key=$AWS_ACCESS_KEY_ID' -var 'secret_key=$AWS_SECRET_KEY_ID' -var 'region=${params.region}' --var-file=./config/terraform.tfvars --auto-approve
+                      """
+                  }
+                }
+            }
+        }
+        /* 
+        stage('Connect to EKS '){
+            when { expression {  params.action == 'create' } }
+        steps{
+
+            script{
+
+                sh """
+                aws configure set aws_access_key_id "$AWS_ACCESS_KEY_ID"
+                aws configure set aws_secret_access_key "$AWS_SECRET_KEY_ID"
+                aws configure set region "${params.region}"
+                aws eks --region ${params.region} update-kubeconfig --name ${params.cluster}
+                """
+            }
+        }
+        } 
+        stage('Deployment on EKS Cluster'){
+            when { expression { params.action == 'create' } }
+            steps{
+                script{
+                  
+                  def apply = false
+
+                  try{
+                    input message: 'please confirm to deploy on eks', ok: 'Ready to apply the config ?'
+                    apply = true
+                  }catch(err){
+                    apply= false
+                    currentBuild.result  = 'UNSTABLE'
+                  }
+                  if(apply){
+
+                    sh """
+                      kubectl apply -f k8s/deployment.yaml
+                    """
+                  }
+                }
+            }
+        }
+        */
+
         /*
         stage('Docker Image Build'){
          when { expression {  params.action == 'create' } }
