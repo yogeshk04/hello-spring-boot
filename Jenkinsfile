@@ -11,7 +11,7 @@ pipeline{
         // string(name: 'DockerHubUser', description: "name of the Application", defaultValue: 'yogeshk04')
         string(name: 'aws_account_id', description: " AWS Account ID", defaultValue: '383375023402')
         string(name: 'region', description: "Region of ECR", defaultValue: 'eu-central-1')
-        string(name: 'ecr_repo_name', description: "name of the ECR", defaultValue: 'ars-marketplace')
+        string(name: 'ecr_repo_name', description: "name of the ECR", defaultValue: 'ecr-aws-marketplace')
         //string(name: 'cluster', description: "name of the EKS Cluster", defaultValue: 'demo-cluster1')
     }
 
@@ -101,11 +101,11 @@ pipeline{
             steps{
                script{
 
-                   //dockerImagePush("${params.aws_account_id}","${params.region}","${params.ecr_repo_name}")
-                   sh """
+                   dockerImagePush("${params.aws_account_id}","${params.region}","${params.ecr_repo_name}")
+                   /* sh """
                     aws ecr get-login-password --region ${params.region} | docker login --username AWS --password-stdin ${params.aws_account_id}.dkr.ecr.${params.region}.amazonaws.com
                     docker push ${params.aws_account_id}.dkr.ecr.${params.region}.amazonaws.com/${params.ecr_repo}:latest
-                    """
+                    """ */
                }
             }
         }   
