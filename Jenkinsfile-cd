@@ -63,19 +63,11 @@ pipeline{
         stage('Connect to EKS '){
             when { expression {  params.action == 'create' } }
             steps{
-                    maskPasswords('${AWS_SECRET_KEY_ID}', '${AWS_ACCESS_KEY_ID}') {
-                        // Steps that use the sensitive variables
-                        sh "aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID && aws configure set aws_secret_access_key $AWS_SECRET_KEY_ID && aws configure set region ${params.region} && aws eks --region ${params.region} update-kubeconfig --name ${params.cluster}"
-                    }
-                /* script{
-
+                script{
                     sh """
-                    aws configure set aws_access_key_id "$AWS_ACCESS_KEY_ID"
-                    aws configure set aws_secret_access_key "$AWS_SECRET_ACCESS_KEY"
-                    aws configure set region "${params.region}"
                     aws eks --region ${params.region} update-kubeconfig --name ${params.cluster}
                     """
-                } */
+                }
             }
             } 
         stage('Deployment on EKS Cluster'){
