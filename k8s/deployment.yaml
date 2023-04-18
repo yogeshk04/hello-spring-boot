@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: hello-spring
-        image: 383375023402.dkr.ecr.us-east-1.amazonaws.com/ars-marketplace:latest
+        image: 383375023402.dkr.ecr.eu-central-1.amazonaws.com/ecr-aws-marketplace:latest
         resources:
           limits:
             memory: "128Mi"
